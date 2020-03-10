@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+            font-family:'Roboto',sans-serif;
+        }
+        input{
+            /* margin: 5px 20px 5px 5px; */
+            /* width: 100%; */
+            border: 1px solid #c7c7c7;
+            border-radius: 4px;
+            padding: 5px 35px 5px 8px;
+            font-size: 16px;
+            z-index: 8;
+            position: relative;
+            outline: none;
+            background-color: transparent;
+            cursor: text;
+        }
+        label{
+            padding: 10px;
+            vertical-align: middle;
+        }
+        .hide{
+            display: none !important;
+        }
+        .show{
+            display: initial;
+        }
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #e8e8e8;
+        }
+        .btn {
+            height: 45px;
+            padding: 15px 40px;
+            font-size: 16px;
+            outline: none;
+            cursor: pointer;
+            position: relative;
+            border-radius: 6px;
+        }
+        .btn.pri {
+            background-color: #00a86b;
+            border: 1px solid #00a86b;
+            color: #ffffff;
+            line-height: 12px;
+        }
+        .btn.pri:hover {
+            background-color: #01796f;
+            border: 1px solid #01796f;
+            -webkit-box-shadow: 0px 12px 22.32px 1.68px rgba(86, 235, 153, 0.2);
+            box-shadow: 0px 12px 22.32px 1.68px rgba(86, 235, 185, 0.2);
+        }
+        /* .pri.btn {
+            box-shadow: 1px 1px 4px -2px #131712;
+            background:linear-gradient(to bottom, #44c767 5%, #5cbf2a 100%);
+            background-color:#44c767;
+            border-radius:5px;
+            display:inline-block;
+            cursor:pointer;
+            color:#ffffff;
+            font-family:Arial;
+            font-size:18px;
+            font-weight:bold;
+            padding:10px 20px;
+            text-decoration:none;
+        }
+        .pri.btn:hover {
+            background:linear-gradient(to bottom, #5cbf2a 5%, #44c767 100%);
+            background-color:#5cbf2a;
+        }
+        .pri.btn:active {
+            position:relative;
+            top:1px;
+        } */
+        
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body>
+    <h2>Loan pending amount calculator</h2>
+    <form style="display: flex;position: sticky;top:0px;background-color: white;">
+        <label for="pending-amount">Pending amount:</label><br>
+        <input type="number" name="pending-amount" id="pending-amount" required placeholder="5,00,000">
+        <br><br>
+        <label for="interest">Rate of interest:</label><br>
+        <input type="text" name="interest" id="interest" required placeholder="7.45">
+        <br><br>
+        <label for="monthly-installment">Monthly installment:</label><br>
+        <input type="number" name="monthly-installment" id="monthly-installment" required placeholder="10,000">
+        <br><br>
+        <label for="date-of-installment">From date:</label><br>
+        <input type="date" name="date-of-installment" id="date-of-installment" required placeholder="10.01.2020">
+        <br><br>
+        <button class="btn pri" onclick="calculateIntrestTable(event)">Calculate</button>
+    </form>
+    <br>
+    <div class="">
+        <table>
+            <tr>
+                <th>No.</th>
+                <th>Date of installment</th>
+                <th>Pending amount</th>
+                <th>Intrest for that month</th>
+                <th>Pending amount at month end</th>
+            </tr>
+            <tr class="hide table-row">
+                <td class="count"></td>
+                <td class="installment-date"></td>
+                <td class="pending-amount"></td>
+                <td class="interest-amount"></td>
+                <td class="pending-amount-at-month-end"></td>
+            </tr>
+        </table>
+    </div>
+    <script>
+        function calculateIntrestTable(event){
+            event.preventDefault();
+            $(".table-row:not(.hide)").remove();
+            let date = new Date($("#date-of-installment").val());
+            let installment = $("#monthly-installment").val();
+            let yetToPay = $("#pending-amount").val();
+            let rateOfInterest = Number($("#interest").val()), totalInt =0, count=0;
+            while(yetToPay > 0 ){
+                if(yetToPay - installment < 0){
+                    installment = yetToPay;
+                }
+                yetToPay -= installment;
+                let interestAmount = yetToPay * (rateOfInterest/1200);
+                totalInt+=interestAmount;
+                let rowEle = $(".table-row.hide").clone().removeClass("hide");
+                let data = {
+                    date : date,
+                    interest : Math.ceil(interestAmount*100)/100,
+                    pending : Math.ceil(yetToPay*100)/100,
+                    count : ++count
+                }
+                constructRow(rowEle,data);
+                $("table").append(rowEle);
+                yetToPay += interestAmount;
+                date.setMonth(date.getMonth()+1);
+            }
+            let rowEle = $(".table-row.hide").clone().removeClass("hide");
+            constructRow(rowEle, {date : '',interest : Math.ceil(100 * totalInt)/100,pending:'', count : ++count});
+            $("table").append(rowEle);
+        }
+        function constructRow(rowEle, { date, interest, pending, count }){
+            rowEle.find(".installment-date").text((date)? date.toDateString() : '');
+            rowEle.find(".interest-amount").text(interest);
+            rowEle.find(".count").text(count);
+            rowEle.find(".pending-amount").text(pending);
+            if((pending && interest) || (!pending && !interest)){
+                rowEle.find(".pending-amount-at-month-end").text(Math.ceil( 100 * (pending + interest))/100);
+            }
+        }
+    </script>
+</body>
+</html>
