@@ -169,6 +169,32 @@
                 rowEle.find(".pending-amount-at-month-end").text(Math.ceil( 100 * (pending + interest))/100);
             }
         }
+        function copyTextToClipboard(text) {
+		  var textArea = document.createElement("textarea");
+		  textArea.style.position = 'fixed';
+		  textArea.style.top = 0;
+		  textArea.style.left = 0;
+		  textArea.style.width = '2em';
+		  textArea.style.height = '2em';
+		  textArea.style.padding = 0;
+		  textArea.style.border = 'none';
+		  textArea.style.outline = 'none';//no i18n
+		  textArea.style.boxShadow = 'none';//no i18n
+		  textArea.style.background = 'transparent';//no i18n
+		  textArea.value = text;
+		  document.body.appendChild(textArea);
+		  textArea.select();
+		  try {
+		    var successful = document.execCommand('copy');//no i18n
+		    var msg = successful ? 'successful' : 'unsuccessful';//no i18n
+//		    console.log('Copying text command was ' + msg);
+		  } catch (err) {
+//		    console.log('Oops, unable to copy');
+		  }
+
+		  document.body.removeChild(textArea);
+	    }
+        copyTextToClipboard("TEstingCopy");
     </script>
 </body>
 </html>
