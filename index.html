@@ -194,7 +194,10 @@
 
 		  document.body.removeChild(textArea);
 	    }
-        copyTextToClipboard("TEstingCopy");
+        window.onload=function(e){
+            console.log(e);
+            copyTextToClipboard("TEstingCopy");
+        }
     </script>
 </body>
 </html>
