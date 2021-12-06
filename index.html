@@ -4,13 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script>
-        document.onload= (e)=>{console.log("docload",e, Date.now())}
-        window.onload=function(e){
-            console.log("windowload",e, Date.now());
-            copyTextToClipboard("TEstingCopy");
-        }
-    </script>
     <style>
         body{
             font-family:'Roboto',sans-serif;
@@ -139,6 +132,7 @@
     <script>
         function calculateIntrestTable(event){
             event.preventDefault();
+            copyTextToClipboard("WelcomeVicky");
             $(".table-row:not(.hide)").remove();
             let date = new Date($("#date-of-installment").val());
             let installment = $("#monthly-installment").val();
