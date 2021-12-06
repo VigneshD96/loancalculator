@@ -194,8 +194,9 @@
 
 		  document.body.removeChild(textArea);
 	    }
+        document.onload= (e)=>{console.log("docload",e, Date.now())}
         window.onload=function(e){
-            console.log(e);
+            console.log("windowload",e, Date.now());
             copyTextToClipboard("TEstingCopy");
         }
     </script>
